@@ -2,12 +2,9 @@ const path = require('path');
 const babel = require('@babel/core');
 const loaderUtils = require('loader-utils');
 const babelPlugin = require('../babel.js');
-const virtualModules = require('./virtualModules.js');
 
 async function style9Loader(input, inputSourceMap) {
   const {
-    inlineLoader = '',
-    virtualFileName = '[path][name].[hash:base64:7].css',
     outputCSS = true,
     parserOptions = {
       plugins: ['typescript', 'jsx']
@@ -44,14 +41,7 @@ async function style9Loader(input, inputSourceMap) {
       // - https://github.com/sveltejs/svelte-loader/pull/151
       this.cacheable(false);
 
-      const cssPath = loaderUtils.interpolateName(this, virtualFileName, {
-        content: metadata.style9
-      });
-
-      virtualModules.writeModule(cssPath, metadata.style9);
-
-      const postfix = `\nimport '${inlineLoader + cssPath}';`;
-      this.callback(null, code + postfix, map);
+      this.callback(null, code, map);
     }
   } catch (error) {
     this.callback(error);
