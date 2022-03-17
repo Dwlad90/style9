@@ -3,7 +3,7 @@ const NAME = require('../package.json').name;
 const processCSS = require('../src/process-css.js');
 
 class Style9Plugin {
-  constructor({ test = /\.css$/ } = {}) {
+  constructor({ test = /style9.css$/ } = {}) {
     this.test = test;
   }
 

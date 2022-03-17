@@ -1,7 +1,7 @@
 const { URLSearchParams } = require('url');
 
 /**
- * CSSLoader will take the style query params added by `./compiled-loader.ts` and turn it into CSS.
+ * CSSLoader will take the style query params added by `./webpack/loader.ts` and turn it into CSS.
  */
 function CSSLoader() {
   const query = new URLSearchParams(this.resourceQuery);
