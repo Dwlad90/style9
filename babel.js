@@ -5,7 +5,7 @@ const processReferences = require('./src/process-references.js');
 
 const styleSheetName = 'style9-css';
 
-const styleSheetPath = `style9/css-loader!style9/${styleSheetName}.css`;
+const styleSheetPath = `style9/css-loader!style9/css-loader/${styleSheetName}.css`;
 
 const toURIComponent = rule => {
   const component = encodeURIComponent(rule).replace(/!/g, '%21');

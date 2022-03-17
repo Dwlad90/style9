@@ -25,10 +25,12 @@ function getValues(obj) {
   return values;
 }
 
-export default function style9(...styles) {
+function style9(...styles) {
   const merged = styles.reduce(merge, {});
   return getValues(merged).join(' ');
 }
+
+module.exports = style9;
 
 style9.create = () => {
   throw new Error('style9.create calls should be compiled away');

@@ -16,9 +16,9 @@ module.exports = (pluginOptions = {}) => (nextConfig = {}) => {
 
       // For some reason, Next 11.0.1 has `config.optimization.splitChunks`
       // set to `false` when webpack 5 is enabled.
-      config.optimization.splitChunks = config.optimization.splitChunks || {
-        cacheGroups: {}
-      };
+      // config.optimization.splitChunks = config.optimization.splitChunks || {
+      //   cacheGroups: {}
+      // };
 
       config.module.rules.push({
         test: /\.(tsx|ts|js|mjs|jsx)$/,
@@ -34,12 +34,12 @@ module.exports = (pluginOptions = {}) => (nextConfig = {}) => {
       });
 
       if (outputCSS) {
-        config.optimization.splitChunks.cacheGroups.styles = {
-          name: 'styles',
-          test: /\.css$/,
-          chunks: 'all',
-          enforce: true
-        };
+        // config.optimization.splitChunks.cacheGroups.styles = {
+        //   name: 'styles',
+        //   test: /\.css$/,
+        //   chunks: 'all',
+        //   enforce: true
+        // };
 
         config.plugins.push(new Style9Plugin());
       }
