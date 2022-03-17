@@ -1,13 +1,12 @@
 const { URLSearchParams } = require('url');
 
 /**
- * CSSLoader will take the style query params added by `./webpack-loader.ts` and turn it into CSS.
+ * CSSLoader will take the style query params added by `./webpack/loader.js` and turn it into CSS.
  */
 function CSSLoader() {
-  const query = new URLSearchParams(this.resourceQuery);
-  const styleRule = query.get('style');
-  console.log('!!!!!resu1', this.resourceQuery, styleRule);
-  return styleRule || '';
+  const searchParams = new URLSearchParams(this.resourceQuery);
+  const styles = searchParams.get('style');
+  return styles || '';
 }
 
 module.exports = CSSLoader;
@@ -26,4 +25,5 @@ function pitch() {
   const firstLoader = this.loaders.shift();
   this.loaders.push(firstLoader);
 }
+
 module.exports.pitch = pitch;

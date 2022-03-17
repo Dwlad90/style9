@@ -23,7 +23,6 @@ const setPluginConfiguredOption = (rules, pluginName) => {
           continue;
         }
         const { options } = nestedUse;
-        console.log('!!!!!options1', options);
 
         if (!options || typeof options !== 'object' || !options['extract']) {
           continue;
@@ -33,7 +32,7 @@ const setPluginConfiguredOption = (rules, pluginName) => {
     } else {
       if (typeof use === 'object' && use.loader === loader) {
         const { options } = use;
-        console.log('!!!!!options2', options);
+
         if (!options || typeof options !== 'object' || !options['extract']) {
           continue;
         }
