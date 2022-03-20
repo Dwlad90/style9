@@ -2,7 +2,7 @@ import type {
   StandardShorthandProperties,
   StandardLonghandProperties,
   VendorShorthandProperties,
-  SimplePseudos,
+  SimplePseudos
 } from 'csstype';
 
 import * as CSS from 'csstype';
@@ -14,11 +14,13 @@ export type Falsy = false | null | undefined;
 export type AdvancedPseudosSelectors = Exclude<
   CSS.AdvancedPseudos,
   ':matches()' | ':-webkit-any()' | ':-moz-any()'
-  >;
+>;
 
 export type Pseudos = SimplePseudos | AdvancedPseudosSelectors;
 export type AdvancedPseudos = `${AdvancedPseudosSelectors}(${Pseudos})`;
-export type EnheritanceStyles = `${Pseudos} ~ ${string}` | `${string} ~ ${string}`;
+export type EnheritanceStyles =
+  | `${Pseudos} ~ ${string}`
+  | `${string} ~ ${string}`;
 export type Style<Extra = {}> = StyleProperties &
   {
     [key in SimplePseudos]?: Style<Extra>;
