@@ -65,7 +65,9 @@ async function style9Loader(input, inputSourceMap) {
       } else {
         const params = toURIComponent(metadata.style9);
 
-        const cssFileImport = `\nimport '${inlineLoader + styleSheetPath}?style=${params}';`;
+        const cssFileImport = `\nimport '${
+          inlineLoader + styleSheetPath
+        }?style=${params}';`;
 
         this.callback(null, code + cssFileImport, map);
       }

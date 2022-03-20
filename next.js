@@ -135,11 +135,9 @@ module.exports = (pluginOptions = {}) => (nextConfig = {}) => {
         };
 
         if (options.dev) {
-
           // HMR reloads the CSS file when the content changes but does not use
           // the new file name, which means it can't contain a hash.
           const filename = 'static/css/[name].css';
-
 
           // Logic adopted from https://git.io/JtdBy
           config.plugins.push(
