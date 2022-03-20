@@ -76,13 +76,17 @@ export default {
 ## Next.js
 
 ```javascript
+const withTM = require('next-transpile-modules')(['style9']);
+// If you are using the latest version Next.js:
 const withStyle9 = require('style9/next');
+// If you are using Next.js below 12.0.5:
+const withStyle9 = require('style9/next-legacy');
 
 module.exports = withStyle9({
   parserOptions?: BabelParserOpts;
   minifyProperties?: boolean;
   incrementalClassnames?: boolean;
-});
+})(withTM());
 ```
 
 ## Gatsby

@@ -1,13 +1,16 @@
 const { SourceMapSource, RawSource } = require('webpack-sources');
 const NAME = require('../package.json').name;
 const processCSS = require('../src/process-css.js');
+const virtualModules = require('./virtualModules.js');
 
 class Style9Plugin {
-  constructor({ test = /style9.css$/ } = {}) {
+  constructor({ test = /\.css$/ } = {}) {
     this.test = test;
   }
 
   apply(compiler) {
+    virtualModules.apply(compiler);
+
     compiler.hooks.compilation.tap(NAME, compilation => {
       if (compilation.hooks.processAssets) {
         compilation.hooks.processAssets.tap(

@@ -49,7 +49,8 @@
     "postcss-discard-duplicates": "^5.1.0",
     "postcss-selector-parser": "^6.0.2",
     "sort-css-media-queries": "^2.0.4",
-    "webpack-sources": "^2.2.0"
+    "webpack-sources": "^2.2.0",
+    "webpack-virtual-modules": "^0.4.1"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.10.4",
