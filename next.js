@@ -64,7 +64,7 @@ function getStyle9VirtualCssLoader(options, MiniCssExtractPlugin) {
   return outputLoaders;
 }
 
-module.exports = (pluginOptions = {}) => (nextConfig = {}) => {
+module.exports = ({ renderSsr, ...pluginOptions } = {}) => (nextConfig = {}) => {
   return {
     ...nextConfig,
     webpack(config, options) {
@@ -94,7 +94,7 @@ module.exports = (pluginOptions = {}) => (nextConfig = {}) => {
           {
             loader: Style9Plugin.loader,
             options: {
-              dev: options.dev,
+              // dev: options.dev,
               // Here we configure a custom virtual css file name, for later matches
               virtualFileName: '[path][name].[hash:base64:7].style9.css',
               // We will not pass a inline loader, instead we will add a specfic rule for /\.style9.css$/
@@ -106,7 +106,7 @@ module.exports = (pluginOptions = {}) => (nextConfig = {}) => {
         ]
       });
 
-      if (options.dev) {
+      if (renderSsr && options.dev) {
         // Based on https://github.com/vercel/next.js/blob/88a5f263f11cb55907f0d89a4cd53647ee8e96ac/packages/next/build/webpack/config/helpers.ts#L12-L18
         const cssRules = config.module.rules.find(
           rule =>
@@ -134,7 +134,7 @@ module.exports = (pluginOptions = {}) => (nextConfig = {}) => {
           enforce: true
         };
 
-        if (options.dev) {
+        if (renderSsr && options.dev) {
           // HMR reloads the CSS file when the content changes but does not use
           // the new file name, which means it can't contain a hash.
           const filename = 'static/css/[name].css';
