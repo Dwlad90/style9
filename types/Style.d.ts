@@ -5,13 +5,31 @@ import type {
   SimplePseudos
 } from 'csstype';
 
+import * as CSS from 'csstype';
+
 export type AtRules = '@media' | '@supports';
 
 export type Falsy = false | null | undefined;
 
+export type AdvancedPseudosSelectors = Exclude<
+  CSS.AdvancedPseudos,
+  ':matches()' | ':-webkit-any()' | ':-moz-any()'
+>;
+
+export type Pseudos = SimplePseudos | AdvancedPseudosSelectors;
+export type AdvancedPseudos = `${AdvancedPseudosSelectors}(${Pseudos})`;
+export type EnheritanceStyles =
+  | `${Pseudos} ~ ${string}`
+  | `${string} ~ ${string}`;
 export type Style<Extra = {}> = StyleProperties &
   {
     [key in SimplePseudos]?: Style<Extra>;
+  } &
+  {
+    [key in AdvancedPseudos]?: Style<Extra>;
+  } &
+  {
+    [key in EnheritanceStyles]?: Style<Extra>;
   } &
   {
     [key in AtRules]?: Record<string, Style<Extra>>;

@@ -4,6 +4,7 @@ const {
 const { browserslist } = require('next/dist/compiled/browserslist');
 const { lazyPostCSS } = require('next/dist/build/webpack/config/blocks/css');
 
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const Style9Plugin = require('./webpack/index.js');
 
 // Adopted from https://github.com/vercel/next.js/blob/1f1632979c78b3edfe59fd85d8cce62efcdee688/packages/next/build/webpack-config.ts#L60-L72
@@ -63,7 +64,7 @@ function getStyle9VirtualCssLoader(options, MiniCssExtractPlugin) {
   return outputLoaders;
 }
 
-module.exports = (pluginOptions = {}) => (nextConfig = {}) => {
+module.exports = ({ renderSsr, ...pluginOptions } = {}) => (nextConfig = {}) => {
   return {
     ...nextConfig,
     webpack(config, options) {
@@ -87,17 +88,13 @@ module.exports = (pluginOptions = {}) => (nextConfig = {}) => {
       // v9 has issues when using own plugin in production
       // v10.2.1 has issues when using built-in plugin in development since it
       // doesn't bundle HMR files
-      const MiniCssExtractPlugin = options.dev
-        ? require('mini-css-extract-plugin')
-        : require('next/dist/build/webpack/plugins/mini-css-extract-plugin')
-            .default;
-
       config.module.rules.push({
         test: /\.(tsx|ts|js|mjs|jsx)$/,
         use: [
           {
             loader: Style9Plugin.loader,
             options: {
+              // dev: options.dev,
               // Here we configure a custom virtual css file name, for later matches
               virtualFileName: '[path][name].[hash:base64:7].style9.css',
               // We will not pass a inline loader, instead we will add a specfic rule for /\.style9.css$/
@@ -109,23 +106,25 @@ module.exports = (pluginOptions = {}) => (nextConfig = {}) => {
         ]
       });
 
-      // Based on https://github.com/vercel/next.js/blob/88a5f263f11cb55907f0d89a4cd53647ee8e96ac/packages/next/build/webpack/config/helpers.ts#L12-L18
-      const cssRules = config.module.rules.find(
-        rule =>
-          Array.isArray(rule.oneOf) &&
-          rule.oneOf.some(
-            ({ test }) =>
-              typeof test === 'object' &&
-              typeof test.test === 'function' &&
-              test.test('filename.css')
-          )
-      ).oneOf;
+      if (renderSsr && options.dev) {
+        // Based on https://github.com/vercel/next.js/blob/88a5f263f11cb55907f0d89a4cd53647ee8e96ac/packages/next/build/webpack/config/helpers.ts#L12-L18
+        const cssRules = config.module.rules.find(
+          rule =>
+            Array.isArray(rule.oneOf) &&
+            rule.oneOf.some(
+              ({ test }) =>
+                typeof test === 'object' &&
+                typeof test.test === 'function' &&
+                test.test('filename.css')
+            )
+        ).oneOf;
 
-      // Here we matches virtual css file emitted by Style9Plugin
-      cssRules.unshift({
-        test: /\.style9.css$/,
-        use: getStyle9VirtualCssLoader(options, MiniCssExtractPlugin)
-      });
+        // Here we matches virtual css file emitted by Style9Plugin
+        cssRules.unshift({
+          test: /\.style9.css$/,
+          use: getStyle9VirtualCssLoader(options, MiniCssExtractPlugin)
+        });
+      }
 
       if (outputCSS) {
         config.optimization.splitChunks.cacheGroups.styles = {
@@ -135,21 +134,22 @@ module.exports = (pluginOptions = {}) => (nextConfig = {}) => {
           enforce: true
         };
 
-        // HMR reloads the CSS file when the content changes but does not use
-        // the new file name, which means it can't contain a hash.
-        const filename = options.dev
-          ? 'static/css/[name].css'
-          : 'static/css/[contenthash].css';
+        if (renderSsr && options.dev) {
+          // HMR reloads the CSS file when the content changes but does not use
+          // the new file name, which means it can't contain a hash.
+          const filename = 'static/css/[name].css';
 
-        config.plugins.push(
           // Logic adopted from https://git.io/JtdBy
-          new MiniCssExtractPlugin({
-            filename,
-            chunkFilename: filename,
-            ignoreOrder: true
-          }),
-          new Style9Plugin()
-        );
+          config.plugins.push(
+            new MiniCssExtractPlugin({
+              filename,
+              chunkFilename: filename,
+              ignoreOrder: true
+            })
+          );
+        }
+
+        config.plugins.push(new Style9Plugin());
       }
 
       return config;

@@ -4,8 +4,17 @@ const loaderUtils = require('loader-utils');
 const babelPlugin = require('../babel.js');
 const virtualModules = require('./virtualModules.js');
 
+const styleSheetPath = `style9/css-loader!style9/css-loader/style9.css`;
+
+const toURIComponent = rule => {
+  const component = encodeURIComponent(rule).replace(/!/g, '%21');
+
+  return component;
+};
+
 async function style9Loader(input, inputSourceMap) {
   const {
+    dev,
     inlineLoader = '',
     virtualFileName = '[path][name].[hash:base64:7].css',
     outputCSS = true,
@@ -44,14 +53,24 @@ async function style9Loader(input, inputSourceMap) {
       // - https://github.com/sveltejs/svelte-loader/pull/151
       this.cacheable(false);
 
-      const cssPath = loaderUtils.interpolateName(this, virtualFileName, {
-        content: metadata.style9
-      });
+      if (dev) {
+        const cssPath = loaderUtils.interpolateName(this, virtualFileName, {
+          content: metadata.style9
+        });
 
-      virtualModules.writeModule(cssPath, metadata.style9);
+        virtualModules.writeModule(cssPath, metadata.style9);
 
-      const postfix = `\nimport '${inlineLoader + cssPath}';`;
-      this.callback(null, code + postfix, map);
+        const postfix = `\nimport '${inlineLoader + cssPath}';`;
+        this.callback(null, code + postfix, map);
+      } else {
+        const params = toURIComponent(metadata.style9);
+
+        const cssFileImport = `\nimport '${
+          inlineLoader + styleSheetPath
+        }?style=${params}';`;
+
+        this.callback(null, code + cssFileImport, map);
+      }
     }
   } catch (error) {
     this.callback(error);
